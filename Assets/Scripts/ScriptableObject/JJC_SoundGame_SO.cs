@@ -19,4 +19,7 @@ public class JJC_SoundGame_SO : ScriptableObject
     public float offsetPerfect;
     public float offsetGood;
     public float offsetBad;
+
+    [Header("音楽再生に関する情報")]
+    public float waitPlaySecond = 3.0f;
 }
