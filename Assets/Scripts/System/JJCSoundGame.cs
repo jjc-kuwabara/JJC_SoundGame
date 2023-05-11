@@ -76,4 +76,21 @@ public class JJCSoundGame : MonoBehaviour
             return null;
         }
     }
+
+    private NodeRecorder _nodeRecorder;
+    static public NodeRecorder nodeRecorder
+    {
+        get
+        {
+            if (S != null)
+            {
+                if (S._nodeRecorder == null)
+                {
+                    S._nodeRecorder = GameObject.Find("NodeRecorder").GetComponent<NodeRecorder>();
+                }
+                return S._nodeRecorder;
+            }
+            return null;
+        }
+    }
 }

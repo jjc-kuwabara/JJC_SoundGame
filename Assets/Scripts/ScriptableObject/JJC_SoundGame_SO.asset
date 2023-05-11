@@ -16,9 +16,13 @@ MonoBehaviour:
   nodeSpeed: 10
   nodePosXMin: -3
   nodePosXMax: 3
-  nodePosZInitialize: 20
+  nodePosZInitialize: 10
   nodeHitLineZ: -8.5
   nodeMissLineZ: -11
   offsetPerfect: 1
   offsetGood: 2
   offsetBad: 3
+  staticLineMargin: 1.5
+  waitPlaySecond: 3
+  musicPlayLimit: 30
+  nodeSpawnInfoFileName: NodeSpawnInfo000.csv
