@@ -14,6 +14,11 @@ public class AudioManager : MonoBehaviour
     [SerializeField]
     [Header("シーン起動直後の音楽再生待ち状態かどうか")]
     bool isWaitPlay;
+    [Header("ポーズ中かどうか")]
+    bool isPause;
+    [Header("seekBarの位置（割合）")]
+    float seekRate;
+
 
     AudioSource audioSource;
 
@@ -23,12 +28,17 @@ public class AudioManager : MonoBehaviour
         currentSecond = 0.0f;
         isWaitPlay = true;
         audioSource = GetComponent<AudioSource>();
+        isPause = false;
+        seekRate = 0.0f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        currentSecond = currentSecond + Time.deltaTime;
+        if (!isPause)
+        {
+            currentSecond = currentSecond + Time.deltaTime;
+        }
 
         if (isWaitPlay && currentSecond > JJCSoundGame.jjcSoundGameSO.waitPlaySecond)
         {
@@ -47,7 +57,14 @@ public class AudioManager : MonoBehaviour
             audioSource.Stop();
         }
 
-        // 
+        if(audioSource.isPlaying && !isPause)
+        {
+            float currentTime = audioSource.time;
+            float maxTime = audioSource.clip.length;
+            seekRate = currentTime / maxTime;
+        }
+
+        /*
         if (isRecording && !isWaitPlay && !audioSource.isPlaying)
         {
             string filePath = Path.Combine(Application.persistentDataPath, JJCSoundGame.jjcSoundGameSO.nodeSpawnInfoFileName);
@@ -55,5 +72,35 @@ public class AudioManager : MonoBehaviour
             File.WriteAllText(filePath, resultString);
             Debug.Log(filePath);
         }
+        */
+    }
+
+    public void Pause()
+    {
+        if (audioSource.isPlaying && !isPause)
+        {
+            audioSource.Pause();
+        }
+        isPause = true;
+    }
+
+    public void UnPause(float inputSeekRate)
+    {
+        if (isPause)
+        {
+            seekRate = inputSeekRate;
+            float maxTime = audioSource.clip.length;
+            float currentTime = seekRate * maxTime;
+            audioSource.time = currentTime;
+            audioSource.UnPause();
+            isPause = false;
+
+            currentSecond = JJCSoundGame.jjcSoundGameSO.waitPlaySecond + currentTime;
+        }
+    }
+
+    public float GetSeekRate()
+    {
+        return seekRate;
     }
 }
