@@ -6,46 +6,91 @@ public class NodeRecorder : MonoBehaviour
 {
     float currentSecond;
 
-    List<BlockSpawner.NodeSpawnInfo> nodeRecordList;
+//    List<BlockSpawner.NodeSpawnInfo> nodeRecordList;
+    AudioManager audioManager;
+
+    bool isEnableTapNodeCreate; // タップしたらノードを作成して良い状態.
+    NodeOperateMenu nodeOperateMenu;
+
+    public enum NODE_OPERATE_MODE
+    {
+        CREATE,
+        REMOVE,
+        MOVE
+    };
+    NODE_OPERATE_MODE _nodeOperateMode;
+
 
     // Start is called before the first frame update
     void Start()
     {
         currentSecond = 0.0f;
-        nodeRecordList = new List<BlockSpawner.NodeSpawnInfo>();
+//        nodeRecordList = new List<BlockSpawner.NodeSpawnInfo>();
+        audioManager = GameObject.Find("GameManager").GetComponent<AudioManager>();
+        isEnableTapNodeCreate = false;
+        _nodeOperateMode = NODE_OPERATE_MODE.CREATE;
+        nodeOperateMenu = GameObject.Find("NodeOperateMenu").GetComponent<NodeOperateMenu>();
+        nodeOperateMenu.RefreshOperateMode(_nodeOperateMode);
     }
 
     // Update is called once per frame
     void Update()
     {
-        currentSecond = currentSecond + Time.deltaTime;
+        currentSecond = audioManager.GetCurrentSecond();
 
-        if (Input.GetMouseButtonDown(0))
+        if ( Input.GetMouseButtonDown(0) )
         {
-            Vector3 mouseWorldPos = Vector3.zero; // マウスのワールド座標を格納する.
-
-            // レイキャストによって、カメラからマウス座標に対して飛ばしたレイと、地面との衝突を検知する.
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+            if (isEnableTapNodeCreate && _nodeOperateMode == NODE_OPERATE_MODE.CREATE)
             {
-                mouseWorldPos = hit.point;
-            }
-            int lineId = NearStaticLineId(mouseWorldPos); // マウスのワールド座標に一番近い、ラインを確認する.
-            float elapsedTime = currentSecond - JJCSoundGame.jjcSoundGameSO.waitPlaySecond; // 音楽が流れてから経過した秒数.
+                Vector3 mouseWorldPos = Vector3.zero; // マウスのワールド座標を格納する.
 
-            bool isValid = true;
-            if (elapsedTime < 0.0f)
+                // レイキャストによって、カメラからマウス座標に対して飛ばしたレイと、地面との衝突を検知する.
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+                {
+                    mouseWorldPos = hit.point;
+                }
+                int lineId = NearStaticLineId(mouseWorldPos); // マウスのワールド座標に一番近い、ラインを確認する.
+                float elapsedTime = currentSecond - JJCSoundGame.jjcSoundGameSO.waitPlaySecond; // 音楽が流れてから経過した秒数.
+
+                bool isValid = true;
+                if (elapsedTime < 0.0f)
+                {
+                    isValid = false;
+                }
+
+                if (isValid)
+                {
+                    /*                BlockSpawner.NodeSpawnInfo nodeSpawnInfo = new BlockSpawner.NodeSpawnInfo();
+                                    nodeSpawnInfo.lineId = lineId;
+                                    nodeSpawnInfo.nodeTapTimingSecond = elapsedTime;
+                                    odeRecordList.Add(nodeSpawnInfo);*/
+
+                    GameObject instanceObj = Instantiate(JJCSoundGame.jjcSoundGameSO.recordingNodePrefab);
+                    RecordingNode instanceRecordingNode = instanceObj.GetComponent<RecordingNode>();
+                    instanceRecordingNode.lineId = lineId;
+                    instanceRecordingNode.nodeTapTimingSecond = elapsedTime;
+                    instanceRecordingNode.transform.SetParent(GameObject.Find("NodeParent").transform);
+
+                    Debug.Log("nearLineId:" + lineId.ToString() + ", elapsedTime:" + elapsedTime.ToString()); // パラメータをデバッグ表示する.
+                }
+            }
+            else if (_nodeOperateMode == NODE_OPERATE_MODE.REMOVE)
             {
-                isValid = false;
-            }
+                // レイキャストによって、カメラからマウス座標に対して飛ばしたレイと、地面との衝突を検知する.
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+                {
+                    if (hit.transform.gameObject.name == "BackgroundPlane")
+                    {
 
-            if (isValid) {
-                BlockSpawner.NodeSpawnInfo nodeSpawnInfo = new BlockSpawner.NodeSpawnInfo();
-                nodeSpawnInfo.lineId = lineId;
-                nodeSpawnInfo.nodeTapTimingSecond = elapsedTime;
-                nodeRecordList.Add(nodeSpawnInfo);
+                    }
+                    else
+                    {
+                        Destroy(hit.transform.gameObject);
+                    }
 
-                Debug.Log("nearLineId:" + lineId.ToString() + ", elapsedTime:" + elapsedTime.ToString()); // パラメータをデバッグ表示する.
+                }
             }
         }
 
@@ -94,10 +139,48 @@ public class NodeRecorder : MonoBehaviour
     public string GetRecordedNodeSpawnInfo()
     {
         string resultString = "";
-        for (int i = 0; i < nodeRecordList.Count; i++)
+ /*       for (int i = 0; i < nodeRecordList.Count; i++)
         {
             resultString = resultString + nodeRecordList[i].lineId.ToString() + "," + nodeRecordList[i].nodeTapTimingSecond.ToString() + "\n";
-        }
+        }*/
         return resultString;
+    }
+
+    public void RefreshNodePosition(float seekRate)
+    {
+        float currentSecond = seekRate * audioManager.GetMaxTime();
+        
+        GameObject nodeParent = GameObject.Find("NodeParent");
+
+        int nodeNum = nodeParent.transform.childCount;
+        for (int i = 0; i < nodeNum; i++)
+        {
+            GameObject nodeObj = nodeParent.transform.GetChild(i).gameObject;
+            RecordingNode recordingNode = nodeObj.GetComponent<RecordingNode>();
+
+            int lineId = recordingNode.lineId;
+            float tapTimingSec = recordingNode.nodeTapTimingSecond;
+
+            float elapsedSecondOffsetZ = -currentSecond * JJCSoundGame.jjcSoundGameSO.nodeSpeed; // 経過時間によるZ座標の差分.
+            float tapSecondOffsetZ = tapTimingSec * JJCSoundGame.jjcSoundGameSO.nodeSpeed; // タップ発生時間によるZ座標の差分.
+
+            nodeObj.transform.position = new Vector3(
+                lineId * JJCSoundGame.jjcSoundGameSO.staticLineMargin,
+                0.0f,
+                JJCSoundGame.jjcSoundGameSO.nodeHitLineZ + tapSecondOffsetZ + elapsedSecondOffsetZ
+                );
+        }
+
+    }
+
+    public void EnableTapNodeCreate(bool isEnable)
+    {
+        isEnableTapNodeCreate = isEnable;
+    }
+
+    public void ChangeNodeOperateMode(NODE_OPERATE_MODE nodeOperateMode)
+    {
+        _nodeOperateMode = nodeOperateMode;
+        nodeOperateMenu.RefreshOperateMode(_nodeOperateMode);
     }
 }

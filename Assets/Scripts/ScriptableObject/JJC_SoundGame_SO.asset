@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: JJC_SoundGame_SO
   m_EditorClassIdentifier: 
   nodePrefab: {fileID: 5368321077579755917, guid: 24ffac88ce4c5e847934d81fb2a65168, type: 3}
+  recordingNodePrefab: {fileID: 1952627055234529465, guid: 0c3235a14bdb03042bc2e4e5f7d1f91a, type: 3}
   nodeSpeed: 10
   nodePosXMin: -3
   nodePosXMax: 3
@@ -24,5 +25,5 @@ MonoBehaviour:
   offsetBad: 3
   staticLineMargin: 1.5
   waitPlaySecond: 3
-  musicPlayLimit: 30
+  musicPlayLimit: 1800
   nodeSpawnInfoFileName: NodeSpawnInfo000.csv

@@ -93,4 +93,21 @@ public class JJCSoundGame : MonoBehaviour
             return null;
         }
     }
+
+    private AudioManager _audioManager;
+    static public AudioManager audioManager
+    {
+        get
+        {
+            if (S != null)
+            {
+                if (S._audioManager == null)
+                {
+                    S._audioManager = GameObject.Find("GameManager").GetComponent<AudioManager>();
+                }
+                return S._audioManager;
+            }
+            return null;
+        }
+    }
 }

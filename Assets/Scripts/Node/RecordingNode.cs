@@ -5,7 +5,7 @@ using UnityEngine;
 public class RecordingNode : MonoBehaviour
 {
     public int lineId;
-    public float tapTimingSec;
+    public float nodeTapTimingSecond;
 
     // Start is called before the first frame update
     void Start()

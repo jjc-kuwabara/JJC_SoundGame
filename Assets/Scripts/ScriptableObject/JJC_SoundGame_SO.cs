@@ -8,6 +8,7 @@ public class JJC_SoundGame_SO : ScriptableObject
     [Header("ノードに関する情報")]
     [SerializeField]
     public GameObject nodePrefab;
+    public GameObject recordingNodePrefab;
     public float nodeSpeed = 10.0f;
     public int nodePosXMin = -3;
     public int nodePosXMax = 3;
