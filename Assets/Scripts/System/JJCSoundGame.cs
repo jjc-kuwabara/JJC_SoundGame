@@ -110,4 +110,21 @@ public class JJCSoundGame : MonoBehaviour
             return null;
         }
     }
+
+    private SeManager _seManager;
+    static public SeManager seManager
+    {
+        get
+        {
+            if (S != null)
+            {
+                if (S._seManager == null)
+                {
+                    S._seManager = GameObject.Find("SeManager").GetComponent<SeManager>();
+                }
+                return S._seManager;
+            }
+            return null;
+        }
+    }
 }

@@ -35,19 +35,23 @@ public class NodeTap : MonoBehaviour
         if (absPositionOffsetZ < JJCSoundGame.jjcSoundGameSO.offsetPerfect)
         {
             JJCSoundGame.scoreBoard.AddScore(ScoreBoard.SCORE_TYPE.PERFECT);
+            JJCSoundGame.seManager.PlaySe(SeManager.SE_ID.SE000);
             Debug.Log("Perfect");
         }else if (absPositionOffsetZ < JJCSoundGame.jjcSoundGameSO.offsetGood)
         {
             JJCSoundGame.scoreBoard.AddScore(ScoreBoard.SCORE_TYPE.GOOD);
+            JJCSoundGame.seManager.PlaySe(SeManager.SE_ID.SE000);
             Debug.Log("Good");
         }else if (absPositionOffsetZ < JJCSoundGame.jjcSoundGameSO.offsetBad)
         {
             JJCSoundGame.scoreBoard.AddScore(ScoreBoard.SCORE_TYPE.BAD);
+            JJCSoundGame.seManager.PlaySe(SeManager.SE_ID.SE000);
             Debug.Log("Bad");
         }
         else
         {
             JJCSoundGame.scoreBoard.AddScore(ScoreBoard.SCORE_TYPE.MISS);
+            JJCSoundGame.seManager.PlaySe(SeManager.SE_ID.SE001);
             Debug.Log("Miss");
         }
 
