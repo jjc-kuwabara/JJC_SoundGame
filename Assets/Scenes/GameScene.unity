@@ -573,6 +573,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 28283808584701721, guid: ec66fd1b66e4f2b44b7a52f56ee6282d, type: 3}
+      propertyPath: m_Volume
+      value: 0.25
+      objectReference: {fileID: 0}
     - target: {fileID: 28283808584701723, guid: ec66fd1b66e4f2b44b7a52f56ee6282d, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -6756,6 +6760,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8338421774245915956, guid: 835566c69c1d9214680cc05fb5484ae7, type: 3}
+      propertyPath: Loop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8338421774245915956, guid: 835566c69c1d9214680cc05fb5484ae7, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 1d3fc91b694bc894f9aa5eb7d8f141c4, type: 3}
+    - target: {fileID: 8338421774245915956, guid: 835566c69c1d9214680cc05fb5484ae7, type: 3}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8338421774245915957, guid: 835566c69c1d9214680cc05fb5484ae7, type: 3}
       propertyPath: m_RootOrder
       value: 8
